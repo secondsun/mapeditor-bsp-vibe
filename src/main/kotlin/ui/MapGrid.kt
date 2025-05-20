@@ -1,9 +1,13 @@
 package ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.gestures.onDrag
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -110,6 +115,7 @@ fun MapCell(
 /**
  * Displays the 64x64 map grid
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MapGrid(editorState: EditorState, modifier: Modifier = Modifier) {
     // Calculate cell size based on zoom level
@@ -124,6 +130,7 @@ fun MapGrid(editorState: EditorState, modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(8.dp)
             .border(1.dp, Color.Gray)
+
     ) {
         items(editorState.mapData.width * editorState.mapData.height) { index ->
             val x = index % editorState.mapData.width

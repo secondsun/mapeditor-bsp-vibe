@@ -17,10 +17,9 @@ fun App(window: ComposeWindow) {
     val editorState = remember { EditorState() }
     
     MaterialTheme {
-        // Main layout with toolbar on the left and map grid on the right
-        Row(modifier = Modifier.fillMaxSize()) {
-            // Toolbar
-            Toolbar(
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Horizontal toolbar at the top
+            HorizontalToolbar(
                 editorState = editorState,
                 onNewMap = {
                     // Check for unsaved changes before creating a new map
@@ -39,16 +38,37 @@ fun App(window: ComposeWindow) {
                 }
             )
             
-            // Map grid
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
-                MapGrid(
+            // Vertical layout with toolbar on left and map grid on right
+            Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                // Vertical toolbar (tile selectors only)
+                Toolbar(
                     editorState = editorState,
-                    modifier = Modifier.fillMaxSize()
+                    onNewMap = {
+                        if (FileOperations.checkUnsavedChanges(window, editorState)) {
+                            editorState.newMap()
+                        }
+                    },
+                    onSaveMap = {
+                        FileOperations.saveMap(window, editorState)
+                    },
+                    onLoadMap = {
+                        if (FileOperations.checkUnsavedChanges(window, editorState)) {
+                            FileOperations.loadMap(window, editorState)
+                        }
+                    }
                 )
+                
+                // Map grid
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    MapGrid(
+                        editorState = editorState,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
         
